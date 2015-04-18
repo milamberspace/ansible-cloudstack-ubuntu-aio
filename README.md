@@ -1,5 +1,5 @@
 # ansible-cloudstack-ubuntu-aio
-Ansible Playbook to install CloudStack All-in-one (aio) on Ubuntu 14.04 LTS (KVM, NFS Server, MySQL)
+[Ansible](http://ansible.com) Playbook to install [Apache CloudStack](cloudstack.apache.org) 4.4 in an All-in-one (aio) setup on Ubuntu 14.04 LTS (KVM, NFS Server, MySQL).
 
 ## Roles:
     - common (install some utils, add cloudbr0 (reboot the machine), add ntp, sysstat)
@@ -7,11 +7,12 @@ Ansible Playbook to install CloudStack All-in-one (aio) on Ubuntu 14.04 LTS (KVM
     - nfs_server
     - nfs_client
     - mysql
-    - cloudstack-node
+    - cloudstack-node (+ KVM/Libvrit)
     - cloudstack-manager
 
 ## Setup
 Change ansible_hosts to your server IP or hostname.
+
 Check and modify some variables in group_vars/env.yml
 
 ## Run with:
@@ -19,3 +20,7 @@ Check and modify some variables in group_vars/env.yml
 
 ## Example:
 	ansible-playbook -s -i ansible_hosts -e host=cs-aio1 -e user=ubuntu cs-aio-deploy.yml
+
+## Apache CloudStack UI
+
+After a successful running of playbook, go to http://IP_hostname:8080/client to access at the Apache CloudStack UI.
