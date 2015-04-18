@@ -10,7 +10,7 @@
     - cloudstack-node (+ KVM/Libvrit)
     - cloudstack-manager
 
-## Requierements:
+## Requirements:
  * A machine with at least 5 GB of free disk space (more if you want a lot of virtual machine)
  * Ubuntu 14.04 LTS
  * Network interface on eth0 (will be move to cloudbr0) (possibly to change in env.yml)
