@@ -10,10 +10,16 @@
     - cloudstack-node (+ KVM/Libvrit)
     - cloudstack-manager
 
-## Setup
-Change ansible_hosts to your server IP or hostname.
+## Requierements:
+ * A machine with at least 5 GB of free disk space (more if you want a lot of virtual machine)
+ * Ubuntu 14.04 LTS
+ * Network interface on eth0 (will be move to cloudbr0) (possibly to change in env.yml)
+ * For KVM, Virtualization Technology (VT) must be enable on the machine (BIOS option)
 
-Check and modify some variables in group_vars/env.yml
+## Setup:
+Change in the ansible_hosts file to your server IP or hostname.
+
+Check and/or modify some variables in group_vars/env.yml
 
 ## Run with:
 	ansible-playbook -s -i ansible_hosts -e host=<IP_hostname> -e user=<SSH_Username> cs-aio-deploy.yml
