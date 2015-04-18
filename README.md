@@ -1,6 +1,15 @@
 # ansible-cloudstack-ubuntu-aio
 Ansible Playbook to install CloudStack All-in-one (aio) on Ubuntu 14.04 LTS (KVM, NFS Server, MySQL)
 
+## Roles:
+    - common (install some utils, add cloudbr0 (reboot the machine), add ntp, sysstat)
+    - enable-ssh-root (specially for the node)
+    - nfs_server
+    - nfs_client
+    - mysql
+    - cloudstack-node
+    - cloudstack-manager
+
 ## Setup
 Change ansible_hosts to your server IP or hostname.
 Check and modify some variables in group_vars/env.yml
