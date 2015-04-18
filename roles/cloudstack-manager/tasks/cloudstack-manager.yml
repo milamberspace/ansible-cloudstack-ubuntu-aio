@@ -1,0 +1,53 @@
+---
+- name: Add CloudStack repository
+  lineinfile: dest=/etc/apt/sources.list.d/cloudstack.list regexp='deb {{ cloudstack_repo_url | mandatory }}' line='deb {{ cloudstack_repo_url | mandatory }}' create=yes state=present
+
+- name: Add CloudStack repo key
+  apt_key: id="{{ cloudstack_repo_key_id | mandatory }}" url="{{ cloudstack_repo_key | mandatory }}" state=present
+
+- name: Install CloudStack Management
+  apt: name=cloudstack-management update_cache=yes state=present force=yes
+
+- name: Stop cloudstack-management
+  service: name=cloudstack-management state=stopped
+
+- name: Stop tomcat6
+  service: name=tomcat6 state=stopped
+
+- name: Configure sudo for cloud users
+  lineinfile: dest=/etc/sudoers regexp="{{ item }}" line="{{ item }}" insertafter=EOF 
+  with_items: 
+   - 'cloud ALL =NOPASSWD : /bin/chmod, /bin/cp, /bin/mkdir, /bin/mount, /bin/umount, /usr/bin/keytool'
+  
+- name: Copy patch file (special CS 4.4.2, remove after 4.4.3 released)
+  copy: src=patch_db.patch dest=/tmp/patch_db.patch
+  
+- name: Patch DB script (special CS 4.4.2, remove after 4.4.3 released)
+  shell: patch /usr/share/cloudstack-management/setup/create-schema-premium.sql < /tmp/patch_db.patch
+  
+- name: CloudStack Database setup
+  command: /usr/bin/cloudstack-setup-databases cloud:{{ database_cloud_password }}@localhost --deploy-as=root:{{ database_root_password }} -e file -m {{ database_cloud_password }} -k {{ database_cloud_password }}
+
+- name: Change Session timeout to 4 hours (for my comfort)
+  lineinfile: dest=/etc/cloudstack/management/web.xml regexp='<session-timeout>30</session-timeout>' line='<session-timeout>14400</session-timeout>'
+
+- name: CloudStack Install system vm template
+  file: path=/tmpmnt state=directory recurse=yes
+
+- name: CloudStack mount secondary storage
+  command: mount -t nfs {{ nfs_secondary_storage_host }}:/export/secondary /tmpmnt  
+
+- name: CloudStack Install system vm template
+  command: /usr/share/cloudstack-common/scripts/storage/secondary/cloud-install-sys-tmplt -m /tmpmnt -u {{ url_systemvm_template }} -h kvm -s {{ database_cloud_password }} -F
+
+- name: CloudStack umount secondary storage
+  command: umount /tmpmnt
+
+- name: Remove tmpmnt directory
+  file: path=/tmpmnt state=absent
+
+- name: Start cloudstack-management
+  service: name=cloudstack-management state=started enabled=true
+
+- debug: msg="Go to http://{{ inventory_hostname }}:8080/client/ -  Login=admin - Password=password"
+

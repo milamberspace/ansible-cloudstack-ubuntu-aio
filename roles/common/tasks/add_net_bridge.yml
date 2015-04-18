@@ -1,0 +1,23 @@
+---
+
+- name: Check network cloud bridge
+  shell: cat /etc/network/interfaces
+  register: interfaces_contents
+
+- name: Add network cloud bridge
+  template: src=interfaces.j2 dest=/etc/network/interfaces owner=root group=root mode=0644
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1
+
+- name: Reboot machine
+  command: shutdown -f -r now "Enable network bridge for cloudstack install"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1
+  
+- name: Waiting for server to come back (30 sec, timeout 300 sec)
+  local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH delay=30 timeout=300
+  sudo: false
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1
+  
+  

@@ -1,0 +1,21 @@
+---
+# Ansible playbook to install CloudStack AOI on a server.
+# Change ansible_hosts to your server IP or hostname.
+# Check and modify some variables in group_vars/env.yml
+# Run with: ansible-playbook -v -s -i ansible_hosts -e host=<IP_hostname> -e user=ubuntu cs-aio-deploy.yml
+
+- name: Install and Deploy CloudStack All-In-One
+  hosts: "{{ host | mandatory }}"
+  remote_user: "{{ user | mandatory }}"
+  vars_files:
+    - group_vars/env.yml
+
+  roles:
+    - common
+    - enable-ssh-root
+    - nfs_server
+    - nfs_client
+    - mysql
+    - cloudstack-node
+    - cloudstack-manager
+

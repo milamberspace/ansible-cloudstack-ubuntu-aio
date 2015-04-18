@@ -1,0 +1,21 @@
+---
+- name: Change root permission for ssh connection
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^PermitRootLogin .*$" line="PermitRootLogin yes"
+  when: host_enable_ssh_direct_root
+
+- name: Crypt root password with mkpasswd
+  shell: echo -n {{ host_root_password }} | mkpasswd --stdin --method=SHA-512
+  register: passwd_crypt
+  when: host_enable_ssh_direct_root
+
+- debug: var=passwd_crypt.stdout
+  when: host_enable_ssh_direct_root
+  
+- name: Change (or create) password for root
+  user: name=root password="{{ passwd_crypt.stdout }}"
+  when: host_enable_ssh_direct_root
+    
+- name: Restart ssh
+  service: name=ssh state=restarted
+  when: host_enable_ssh_direct_root
+

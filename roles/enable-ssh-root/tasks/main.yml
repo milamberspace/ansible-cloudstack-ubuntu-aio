@@ -1,0 +1,2 @@
+---
+- include: enable-ssh-root.yml

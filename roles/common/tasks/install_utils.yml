@@ -1,0 +1,44 @@
+---
+- name: Install some utils (not specially for CloudStack)
+  apt: name={{ item }} update_cache=yes state=present
+  with_items:
+   - netcat
+   - vim
+   - rsync
+   - openssl
+   - wget
+   - tcpdump
+   - less
+   - dnsutils
+   - ethtool
+   - python-mysqldb
+   - linux-firmware
+   - whois
+   - patch
+
+- name: Install some utils for CloudStack
+  apt: name={{ item }} update_cache=yes state=present
+  with_items:
+   - bridge-utils
+   - sudo
+   - vlan
+   - ifenslave-2.6
+   - openjdk-7-jre-headless
+   - genisoimage
+   - uuid-runtime
+
+- name: Remove cloud-init (special task for my test virtual machine)
+  apt: name={{ item }} update_cache=yes state=absent purge=yes
+  with_items:
+    - cloud-init
+    - cloud-guest-utils 
+    - eatmydata 
+    - gdisk 
+    - libicu52 
+    - libyaml-0-2 
+    - python-cheetah
+    - python-json-pointer 
+    - python-jsonpatch 
+    - python-oauth 
+    - python-prettytable
+    - python-yaml

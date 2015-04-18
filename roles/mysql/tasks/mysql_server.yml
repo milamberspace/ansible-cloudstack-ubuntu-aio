@@ -1,0 +1,21 @@
+---
+- name: Install mysql-server
+  apt: name=mysql-server update_cache=yes state=present cache_valid_time=3600
+
+- name: Stop mysql-server
+  service: name=mysql state=stopped
+
+- name: Configure MySQL for cloudstack
+  copy: src=cloudstack.cnf dest=/etc/mysql/conf.d/cloudstack.cnf
+
+- name: Start mysql-server
+  service: name=mysql state=started enabled=true
+
+- name: Check if mysql root password is enabled
+  mysql_variables: login_user=root login_password="{{ database_root_password }}" variable=timestamp
+  register: chktime
+  ignore_errors: True
+      
+- name: Define mysql root password
+  mysql_user: name=root password="{{ database_root_password }}" login_unix_socket=/var/run/mysqld/mysqld.sock state=present
+  when: chktime.msg[0] == "u"

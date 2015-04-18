@@ -1,0 +1,10 @@
+---
+- name: Add CloudStack repository
+  lineinfile: dest=/etc/apt/sources.list.d/cloudstack.list regexp='deb {{ cloudstack_repo_url | mandatory }}' line='deb {{ cloudstack_repo_url | mandatory }}' create=yes state=present
+
+- name: Add CloudStack repo key
+  apt_key: id="{{ cloudstack_repo_key_id | mandatory }}" url="{{ cloudstack_repo_key | mandatory }}" state=present
+
+- name: Install CloudStack Agent
+  apt: name=cloudstack-agent update_cache=yes state=present force=yes
+

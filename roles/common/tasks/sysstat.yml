@@ -1,0 +1,10 @@
+---
+- name: Install sysstat
+  apt: name=sysstat update_cache=yes state=present cache_valid_time=3600
+
+- name: Activate sysstat
+  lineinfile: dest=/etc/default/sysstat regexp='^ENABLED="false"' line='ENABLED="true"'
+
+- name: Restart sysstat
+  service: name=sysstat state=restarted enabled=true
+

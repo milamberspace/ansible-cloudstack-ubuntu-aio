@@ -1,0 +1,44 @@
+---
+- name: Install nfs-kernel-server
+  apt: name=nfs-kernel-server update_cache=yes state=present cache_valid_time=3600
+
+- name: Creates directory export NFS primary storage
+  file: path=/export/primary state=directory recurse=yes
+
+- name: Creates directory export NFS secondary storage
+  file: path=/export/secondary state=directory recurse=yes
+
+- name: Add NFS services
+  lineinfile: dest=/etc/services regexp="{{ item }}" line="{{ item }}" insertafter=EOF state=present
+  with_items: 
+   - 'rpc.nfsd 2049/tcp # RPC nfsd'
+   - 'rpc.nfsd 2049/udp # RPC nfsd'
+   - 'rpc.statd-bc 32765/tcp # RPC statd broadcast'
+   - 'rpc.statd-bc 32765/udp # RPC statd broadcast'
+   - 'rpc.statd 32766/tcp # RPC statd listen'
+   - 'rpc.statd 32766/udp # RPC statd listen'
+   - 'rpc.mountd 32767/tcp # RPC mountd'
+   - 'rpc.mountd 32767/udp # RPC mountd'
+   - 'rcp.lockd 32768/tcp # RPC lockd/nlockmgr'
+   - 'rcp.lockd 32768/udp # RPC lockd/nlockmgr'
+   - 'rpc.quotad 32769/tcp # RPC quotad'
+   - 'rpc.quotad 32769/udp # RPC quotad'
+
+- name: Activate nfs-kernel-server in /etc/default/nfs-kernel-server
+  lineinfile: dest=/etc/default/nfs-kernel-server regexp='^RPCMOUNTDOPTS="--manage-gids*"$' line='RPCMOUNTDOPTS="--manage-gids -p 32767"' state=present
+
+- name: Activate nfs-kernel-server in /etc/modprobe.d/local.conf
+  lineinfile: dest=/etc/modprobe.d/local.conf line='options lockd nlm_udpport=32768 nlm_tcpport=32768' create=yes state=present
+
+- name: Activate nfs-kernel-server in /etc/exports
+  lineinfile: dest=/etc/exports line="{{ item }}" insertafter=EOF state=present
+  with_items: 
+   - '/export/primary  127.0.0.1(rw,async,no_root_squash,no_subtree_check)'
+   - '/export/secondary  127.0.0.1(rw,async,no_root_squash,no_subtree_check)'
+
+- name: Export FS
+  command: /usr/sbin/exportfs -a
+
+- name: Restart nfs-kernel-server
+  service: name=nfs-kernel-server state=restarted enabled=true
+

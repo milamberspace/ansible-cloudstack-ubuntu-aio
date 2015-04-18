@@ -1,0 +1,14 @@
+---
+- name: Install nfs-common
+  apt: name=nfs-common update_cache=yes state=present cache_valid_time=3600
+
+- name: Activate nfs-common
+  lineinfile: dest=/etc/default/nfs-common regexp='^STATDOPTS=' line='STATDOPTS="--port 32765 --outgoing-port 32766"'
+
+- name: Activate nfs-common
+  lineinfile: dest=/etc/idmapd.conf regexp="{{ item }}" line='Domain = {{ nfs_domain | mandatory }}' state=present
+  with_items: 
+     - '^# Domain = localdomain'
+     - '^Domain = .*$'
+
+

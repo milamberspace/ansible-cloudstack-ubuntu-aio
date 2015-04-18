@@ -1,0 +1,13 @@
+---
+- name: Increase limits
+  lineinfile: line="{{ item }}" dest="/etc/security/limits.conf"
+  with_items:
+    - "*               hard    nofile           65535"
+    - "*               soft    nofile           65535"
+    - "*               hard    nproc            65535"
+    - "*               soft    nproc            65535"
+
+- include: install_utils.yml
+- include: sysstat.yml
+- include: ntp.yml
+- include: add_net_bridge.yml

@@ -1,0 +1,2 @@
+---
+- include: cloudstack-manager.yml

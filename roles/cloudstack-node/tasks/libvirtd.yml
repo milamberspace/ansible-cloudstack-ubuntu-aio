@@ -1,0 +1,35 @@
+---
+- name: Install Libvirt and KVM
+  apt: name={{ item }} update_cache=yes state=present cache_valid_time=3600
+  with_items:
+   - libvirt-bin
+   - qemu-kvm
+   - python-libvirt
+
+- name: Configure Libvirtd daemon
+  lineinfile: dest=/etc/libvirt/libvirtd.conf regexp="{{ item }}" line="{{ item }}" insertafter=EOF 
+  with_items: 
+   - 'listen_tls=0'
+   - 'listen_tcp=1'
+   - 'tcp_port=16509'
+   - 'auth_tcp=none'
+   - 'mdns_adv = 0'
+
+- name: Change Libvirtd options
+  lineinfile: dest=/etc/default/libvirt-bin regexp='^libvirtd_opts="-d"' line='libvirtd_opts="-d -l"'
+
+- name: Disable AppArmor for libvirtd
+  file: state=link src="/etc/apparmor.d/usr.sbin.libvirtd" path="/etc/apparmor.d/disable/usr.sbin.libvirtd"
+
+- name: Disable AppArmor for virt-aa-helper
+  file: state=link src="/etc/apparmor.d/usr.lib.libvirt.virt-aa-helper" path="/etc/apparmor.d/disable/usr.lib.libvirt.virt-aa-helper" force=yes
+
+- name: Execute apparmor_parser for libvirtd
+  shell: apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
+
+- name: Execute apparmor_parser for virt-aa-helper
+  shell: apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper
+
+- name: Restart Libvirtd
+  service: name=libvirt-bin state=restarted enabled=true
+
