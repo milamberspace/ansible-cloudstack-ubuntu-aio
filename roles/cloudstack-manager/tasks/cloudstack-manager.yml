@@ -49,5 +49,6 @@
 - name: Start cloudstack-management
   service: name=cloudstack-management state=started enabled=true
 
-- debug: msg="Go to http://{{ inventory_hostname }}:8080/client/ -  Login=admin - Password=password"
+- name: "Try CloudStack console:"
+  debug: msg="Go to http://{{ inventory_hostname }}:8080/client/ -  Login=admin - Password=password"
 
