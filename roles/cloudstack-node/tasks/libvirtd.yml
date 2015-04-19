@@ -23,17 +23,21 @@
 - name: Change Libvirtd options
   lineinfile: dest=/etc/default/libvirt-bin regexp='^libvirtd_opts="-d"' line='libvirtd_opts="-d -l"'
 
+- name: Remove libvirtd AppArmor definition from the kernel
+  shell: apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
+  args:
+    creates: /etc/apparmor.d/disable/usr.sbin.libvirtd
+
+- name: Remove virt-aa-helper AppArmor definition from the kernel
+  shell: apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper
+  args:
+    creates: /etc/apparmor.d/disable/usr.lib.libvirt.virt-aa-helper
+
 - name: Disable AppArmor for libvirtd
   file: state=link src="/etc/apparmor.d/usr.sbin.libvirtd" path="/etc/apparmor.d/disable/usr.sbin.libvirtd"
 
 - name: Disable AppArmor for virt-aa-helper
   file: state=link src="/etc/apparmor.d/usr.lib.libvirt.virt-aa-helper" path="/etc/apparmor.d/disable/usr.lib.libvirt.virt-aa-helper" force=yes
-
-- name: Execute apparmor_parser for libvirtd
-  shell: apparmor_parser -R /etc/apparmor.d/usr.sbin.libvirtd
-
-- name: Execute apparmor_parser for virt-aa-helper
-  shell: apparmor_parser -R /etc/apparmor.d/usr.lib.libvirt.virt-aa-helper
 
 - name: Restart Libvirtd
   service: name=libvirt-bin state=restarted enabled=true
