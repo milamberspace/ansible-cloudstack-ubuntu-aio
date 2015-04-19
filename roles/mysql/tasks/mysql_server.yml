@@ -17,6 +17,7 @@
 - name: Check if mysql root password is enabled
   mysql_variables: login_user=root login_password="{{ database_root_password }}" variable=timestamp
   register: chktime
+  ignore_errors: True
       
 - name: Define mysql root password
   mysql_user: name=root password="{{ database_root_password }}" login_unix_socket=/var/run/mysqld/mysqld.sock state=present
