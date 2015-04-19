@@ -7,13 +7,18 @@
    - python-libvirt
 
 - name: Configure Libvirtd daemon
-  lineinfile: dest=/etc/libvirt/libvirtd.conf regexp="{{ item }}" line="{{ item }}" insertafter=EOF 
+  lineinfile: dest=/etc/libvirt/libvirtd.conf regexp="{{ item.regexp }}" line="{{ item.line }}" insertafter=EOF 
   with_items: 
-   - 'listen_tls = 0'
-   - 'listen_tcp = 1'
-   - 'tcp_port = "16509"'
-   - 'auth_tcp = "none"'
-   - 'mdns_adv = 0'
+   - line: 'listen_tls = 0'
+     regexp: '^#?listen_tls'
+   - line: 'listen_tcp = 1'
+     regexp: '^#?listen_tcp'
+   - line: 'tcp_port = "16509"'
+     regexp: '^#?tcp_port'
+   - line: 'auth_tcp = "none"'
+     regexp: '^#?auth_tcp'
+   - line: 'mdns_adv = 0'
+     regexp: '^#?mdns_adv'
 
 - name: Change Libvirtd options
   lineinfile: dest=/etc/default/libvirt-bin regexp='^libvirtd_opts="-d"' line='libvirtd_opts="-d -l"'
