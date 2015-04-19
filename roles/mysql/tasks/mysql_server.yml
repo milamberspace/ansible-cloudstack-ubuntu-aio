@@ -11,6 +11,9 @@
 - name: Start mysql-server
   service: name=mysql state=started enabled=true
 
+- name: Wait for MySQL to start
+  wait_for: port=3306 search_regex=mysql
+
 - name: Check if mysql root password is enabled
   mysql_variables: login_user=root login_password="{{ database_root_password }}" variable=timestamp
   register: chktime
