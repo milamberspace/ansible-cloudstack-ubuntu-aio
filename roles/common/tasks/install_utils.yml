@@ -26,6 +26,7 @@
    - openjdk-7-jre-headless
    - genisoimage
    - uuid-runtime
+   - curl
 
 - name: Remove cloud-init (special task for my test virtual machine)
   apt: name={{ item }} update_cache=yes state=absent purge=yes
