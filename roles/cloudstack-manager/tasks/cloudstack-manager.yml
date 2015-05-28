@@ -19,12 +19,6 @@
   with_items: 
    - 'cloud ALL =NOPASSWD : /bin/chmod, /bin/cp, /bin/mkdir, /bin/mount, /bin/umount, /usr/bin/keytool'
   
-- name: Copy patch file (special CS 4.4.2, remove after 4.4.3 released)
-  copy: src=patch_db.patch dest=/tmp/patch_db.patch
-  
-- name: Patch DB script (special CS 4.4.2, remove after 4.4.3 released)
-  shell: patch /usr/share/cloudstack-management/setup/create-schema-premium.sql < /tmp/patch_db.patch
-  
 - name: CloudStack Database setup
   command: /usr/bin/cloudstack-setup-databases cloud:{{ database_cloud_password }}@localhost --deploy-as=root:{{ database_root_password }} -e file -m {{ database_cloud_password }} -k {{ database_cloud_password }}
 
