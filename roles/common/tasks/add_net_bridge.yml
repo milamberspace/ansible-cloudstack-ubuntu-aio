@@ -6,22 +6,22 @@
 
 - name: Add network cloud bridge (static)
   template: src=interfaces.static.j2 dest=/etc/network/interfaces owner=root group=root mode=0644
-  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1 and ansible_virtualization_type != "kvm"
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet") == -1 and ansible_virtualization_type != "kvm"
 
 - name: Add network cloud bridge (dhcp)
   template: src=interfaces.dhcp.j2 dest=/etc/network/interfaces owner=root group=root mode=0644
-  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1 and ansible_virtualization_type == "kvm"
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet") == -1 and ansible_virtualization_type == "kvm"
 
 - name: Reboot machine
   command: shutdown -f -r now "Enable network bridge for cloudstack install"
   async: 0
   poll: 0
   ignore_errors: true
-  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet") == -1
   
 - name: Waiting for server to come back (30 sec, timeout 300 sec)
   local_action: wait_for port=22 host="{{ inventory_hostname }}" search_regex=OpenSSH delay=30 timeout=300
   sudo: false
-  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet static") == -1
+  when: interfaces_contents.stdout.find("iface {{ host_interface_bridge }} inet") == -1
   
   
