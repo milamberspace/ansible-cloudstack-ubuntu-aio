@@ -33,8 +33,8 @@
 - name: Activate nfs-kernel-server in /etc/exports
   lineinfile: dest=/etc/exports line="{{ item }}" insertafter=EOF state=present
   with_items: 
-   - '/export/primary  127.0.0.1(rw,async,no_root_squash,no_subtree_check)'
-   - '/export/secondary  127.0.0.1(rw,async,no_root_squash,no_subtree_check)'
+   - '/export/primary  *(rw,async,no_root_squash,no_subtree_check)'
+   - '/export/secondary  *(rw,async,no_root_squash,no_subtree_check)'
 
 - name: Export FS
   command: /usr/sbin/exportfs -a
