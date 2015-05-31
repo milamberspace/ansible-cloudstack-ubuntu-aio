@@ -39,6 +39,9 @@
 - name: Disable AppArmor for virt-aa-helper
   file: state=link src="/etc/apparmor.d/usr.lib.libvirt.virt-aa-helper" path="/etc/apparmor.d/disable/usr.lib.libvirt.virt-aa-helper" force=yes
 
-- name: Restart Libvirtd
+- name: "Make sure that libvirtd is stopped"
+  command: "killall -9 libvirtd"
+
+- name: "Start libvirt-bin"
   service: name=libvirt-bin state=restarted enabled=true
 
