@@ -44,6 +44,7 @@
 
 - name: "Make sure that libvirtd is stopped"
   command: "killall -9 libvirtd"
+  ignore_errors: True
 
 - name: "Start libvirt-bin"
   service: name=libvirt-bin state=restarted enabled=true
