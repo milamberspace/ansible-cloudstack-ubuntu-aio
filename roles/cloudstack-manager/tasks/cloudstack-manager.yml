@@ -6,6 +6,9 @@
   apt_key: id="{{ cloudstack_repo_key_id | mandatory }}" url="{{ cloudstack_repo_key | mandatory }}" state=present
   when: add_apt_key
 
+- name: Install Tomcat6
+  apt: name=tomcat6 update_cache=yes state=present force=yes
+
 - name: Install CloudStack Management
   apt: name=cloudstack-management update_cache=yes state=present force=yes
 
