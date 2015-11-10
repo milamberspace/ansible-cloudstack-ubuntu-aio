@@ -1,5 +1,5 @@
 # ansible-cloudstack-ubuntu-aio
-[Ansible](http://ansible.com) Playbook to install [Apache CloudStack](cloudstack.apache.org) 4.4 in an All-in-one (aio) setup on Ubuntu 14.04 LTS (KVM, NFS Server, MySQL).
+[Ansible](http://ansible.com) Playbook to install [Apache CloudStack](cloudstack.apache.org) 4.5 in an All-in-one (aio) setup on Ubuntu 14.04 LTS (KVM, NFS Server, MySQL).
 
 ## Roles:
     - common (install some utils, add cloudbr0 (reboot the machine), add ntp, sysstat)
